@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  clickhouse:
+    image: yandex/clickhouse-server:21.7.8.58
+    environment:
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=admin
+      - CLICKHOUSE_DB=lobelia
+    ports:
+      - "8123:8123"
+      - "9009:9009"
+      - "9000:9000/tcp"
+    restart: unless-stopped
