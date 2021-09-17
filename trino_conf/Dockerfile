@@ -1,7 +1,20 @@
-FROM openjdk:8-jre
+FROM openjdk:11-slim
+
+ENV JAVA_HOME /usr/java/default
+ENV PATH $PATH:$JAVA_HOME/bin
 
 # Update the base image OS and install wget and python
-RUN apt-get update && apt-get install -y wget python less
+RUN apt-get update && apt-get install -y curl \
+    tar \
+    sudo \
+    rsync \
+    python \
+    wget \
+    python3-pip \
+    python-dev \
+    build-essential \
+    uuid-runtime \
+    less
 
 # trino version will be passed in at build time
 ARG TRINO_VERSION=361
