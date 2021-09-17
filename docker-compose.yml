@@ -30,6 +30,7 @@ services:
       - ./clickhouse_data/server-01:/var/lib/clickhouse
     depends_on:
       - zookeeper
+
   clickhouse-02:
     image: yandex/clickhouse-server
     hostname: clickhouse-02
@@ -51,3 +52,19 @@ services:
       - ./clickhouse_data/server-02:/var/lib/clickhouse
     depends_on:
       - zookeeper
+
+  trino-master:
+    build: ./trino_conf
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./trino_data/master:/var/lib/trino/data
+      - ./trino_conf/coordinator_config.properties:/opt/trino/etc/config.properties
+      - ./trino_conf/etc/catalog:/opt/trino/etc/catalog
+
+  trino-worker:
+    build: ./trino_conf
+    volumes:
+      - ./trino_data/worker:/var/lib/trino/data
+      - ./trino_conf/worker_config.properties:/opt/trino/etc/config.properties
+      - ./trino_conf/etc/catalog:/opt/trino/etc/catalog

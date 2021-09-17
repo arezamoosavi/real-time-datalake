@@ -1,2 +1,2 @@
-# data-warehousing-clickhouse-presto
-A data warehouse architecture with clickhouse, presto and using airflow spark and kafka.
+# data-warehousing-clickhouse-trino
+A data warehouse architecture with clickhouse, trino and using airflow spark and kafka.
