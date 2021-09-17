@@ -1,14 +1,53 @@
 version: "3"
 
 services:
-  clickhouse:
-    image: yandex/clickhouse-server:21.7.8.58
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  clickhouse-01:
+    image: yandex/clickhouse-server
+    hostname: clickhouse-01
+    container_name: clickhouse-01
     environment:
       - CLICKHOUSE_USER=admin
       - CLICKHOUSE_PASSWORD=admin
-      - CLICKHOUSE_DB=lobelia
+      - CLICKHOUSE_DB=olap_cluster
     ports:
       - "8123:8123"
-      - "9009:9009"
-      - "9000:9000/tcp"
+      - "9109:9009"
+      - "9100:9000/tcp"
+    volumes:
+      - ./clickhouse_conf/clickhouse_config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse_conf/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml
+      - ./clickhouse_conf/macros/macros-01.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./clickhouse_conf/users.xml:/etc/clickhouse-server/users.xml
+      - ./clickhouse_data/server-01:/var/lib/clickhouse
+    depends_on:
+      - zookeeper
+  clickhouse-02:
+    image: yandex/clickhouse-server
+    hostname: clickhouse-02
+    container_name: clickhouse-02
+    environment:
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=admin
+      - CLICKHOUSE_DB=olap_cluster
+    ports:
+      - "8223:8123"
+      - "9209:9009"
+      - "9200:9000/tcp"
     restart: unless-stopped
+    volumes:
+      - ./clickhouse_conf/clickhouse_config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse_conf/clickhouse_metrika.xml:/etc/clickhouse-server/metrika.xml
+      - ./clickhouse_conf/macros/macros-02.xml:/etc/clickhouse-server/config.d/macros.xml
+      - ./clickhouse_conf/users.xml:/etc/clickhouse-server/users.xml
+      - ./clickhouse_data/server-02:/var/lib/clickhouse
+    depends_on:
+      - zookeeper
